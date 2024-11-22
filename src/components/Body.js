@@ -1,8 +1,8 @@
 import RestaurantCard from "./RestaurantCard";
-// import resList from "../utils/mockData";
 import { useState,useEffect } from "react";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
+import useOnlineStatus from "../utils/useOnlineStatus";
 
 const Body=()=>{
 
@@ -24,6 +24,8 @@ const fetchData= async ()=>{
   setfilterdRestaurent(json?.data?.cards[1 || 2]?.card?.card?.gridElements?.infoWithStyle?.restaurants || [])
 }
 
+const onlineStatus=useOnlineStatus();
+if (onlineStatus=== false) return <h1>loooks like u r offline</h1>;
 console.log("body render");
 
 
@@ -37,22 +39,22 @@ if(listOfRestaurent.length===0){
  }
 
 return(
-      <div className="body">
-              <div className="filter">
-                <div className="search">
-                    <input type="text" className="search-box" value={searchText} 
+      <div className="body ">
+              <div className="filter flex">
+                <div className="search m-3 p-4  ">
+                    <input type="text" className="search-box border border-solid border-black rounded-sm ml-20" value={searchText} 
                     onChange={(e)=>{
                         setsearchText(e.target.value)
                         console.log("body render")
                     }} />
-                    <button onClick={()=>{
+                    <button className="ml-4 bg-red-500 p-1 rounded-md text-white align-middle transform hover:scale-105 hover:z-10 transition-all" onClick={()=>{
                          const filterdRestaurent= listOfRestaurent.filter(
                           (res)=>res.info?.name.toLowerCase().includes(searchText.toLowerCase()));
                           setfilterdRestaurent(filterdRestaurent);
                     }}>Search</button>
                 </div>
 
-                    <button className="filter-btn" 
+                    <button className="filter-btn bg-red-500 p-1 h-9 mt-6 rounded-md text-white align-middle transform hover:scale-105 hover:z-10 transition-all" 
                     onMouseOver={()=>{console.log("button clicked")}}
                     onClick={()=>{
                       // filter logic
@@ -63,7 +65,7 @@ return(
                     
                     >Top Rated Restaurant</button>
               </div>
-              <div className="res-container">
+              <div className="res-container flex flex-wrap justify-around m-12 mt-0 overflow-hidden  ">
              {
               filterdRestaurent.map((restaurant)=>(
                 <Link key={restaurant.info.id}  to={"/restaurants/"+restaurant.info.id}><RestaurantCard  resData={restaurant}/></Link>))
