@@ -5,12 +5,12 @@ import { addItem } from "../utils/cartSlice.js";
 
 const Itemlist = ({ items }) => {
   const dispatch = useDispatch();
-  const [clickedItemId, setClickedItemId] = useState(null); // Tracks the last clicked item ID
+  const [clickedItemId, setClickedItemId] = useState(null);
 
   const handleAddItem = (item) => {
     dispatch(addItem(item));
-    setClickedItemId(item.card.info.id); // Set the clicked item ID
-    setTimeout(() => setClickedItemId(null), 500); // Reset after 1 second
+    setClickedItemId(item.card.info.id); 
+    setTimeout(() => setClickedItemId(null), 500); 
   };
 
   return (

@@ -7,7 +7,6 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Handle the form submission logic here, e.g., sending the data to a server
     console.log('Form submitted:', { name, email, message })
   }
 
@@ -27,7 +26,6 @@ const Contact = () => {
           </h2>
 
           <form onSubmit={handleSubmit}>
-            {/* Name Input */}
             <div className="mb-4">
               <label className="block text-lg text-gray-800 mb-2" htmlFor="name">
                 Your Name
@@ -43,7 +41,6 @@ const Contact = () => {
               />
             </div>
 
-            {/* Email Input */}
             <div className="mb-4">
               <label className="block text-lg text-gray-800 mb-2" htmlFor="email">
                 Your Email
@@ -59,7 +56,6 @@ const Contact = () => {
               />
             </div>
 
-            {/* Message Input */}
             <div className="mb-6">
               <label className="block text-lg text-gray-800 mb-2" htmlFor="message">
                 Your Message
@@ -75,7 +71,6 @@ const Contact = () => {
               />
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               className="w-full py-3 bg-indigo-600 text-white text-lg font-semibold rounded-md hover:bg-indigo-700"

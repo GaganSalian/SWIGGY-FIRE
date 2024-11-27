@@ -29,8 +29,6 @@ const onlineStatus=useOnlineStatus();
 if (onlineStatus=== false) return <h1>loooks like u r offline</h1>;
 console.log("body render");
 
-
-
 if(listOfRestaurent.length===0){
   return (
     <div>

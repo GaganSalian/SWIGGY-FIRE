@@ -3,8 +3,7 @@ import Itemlist from './Itemlist.js';
 
 const RestaurantCategories = ({data,showItems,setShowIndex,}) => {
    
-
-    const handleClick=()=>{
+ const handleClick=()=>{
         setShowIndex();
     }
  
