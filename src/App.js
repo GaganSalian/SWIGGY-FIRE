@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect,useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import Header from "./components/Header";
 import Body from "./components/Body";
@@ -16,22 +16,35 @@ import Cart from "./components/Cart";
 const Grocery = lazy(() => import("./components/Grocery"));
 
 const AppLayout = () => {
-  const [userName,setUserName]=useState();
+  const [userName, setUserName] = useState();
+  const [darkMode, setDarkMode] = useState(false);
 
-  useEffect(()=>{
-    const data={
-      name:"Gagan Salian",
-    }
+
+  useEffect(() => {
+    const data = {
+      name: "Gagan Salian",
+    };
     setUserName(data.name);
-  },[]);
+  }, []);
+
+ 
+  const handleDarkModeToggle = () => {
+    setDarkMode(!darkMode);
+    if (darkMode) {
+      document.documentElement.classList.remove("dark");
+    } else {
+      document.documentElement.classList.add("dark");
+    }
+  };
+
   return (
     <Provider store={appStore}>
-    <UserContext.Provider value={{loggedInUser:userName,setUserName}} >
-    <div className="app">
-      <Header />
-      <Outlet />
-    </div>
-    </UserContext.Provider>
+      <UserContext.Provider value={{ loggedInUser: userName, setUserName }}>
+        <div className={`app ${darkMode ? "dark" : ""}`}>
+          <Header toggleDarkMode={handleDarkModeToggle} />
+          <Outlet />
+        </div>
+      </UserContext.Provider>
     </Provider>
   );
 };
