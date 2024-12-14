@@ -18,7 +18,7 @@ const Cart = () => {
 
   const handlePayment = () => {
     // Call your backend to create an order
-    fetch("http://localhost:3001/api/create-order", {
+    fetch("https://swiggy-fire-backend.onrender.com", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
