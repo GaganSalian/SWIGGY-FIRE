@@ -1,5 +1,5 @@
 
-If You get  CORS  iss please add "cors extension chrome"
+If You get  CORS  issue  please add "cors extension chrome" for now this is in progress.
 
 
 Steps for Installation
