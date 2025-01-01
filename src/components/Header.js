@@ -58,7 +58,7 @@ const Header = () => {
           <li className="">{loggedInUser ? loggedInUser.name : "Guest"}</li>
           <button
             className={`login px-4 py-0 h-8 mt-2 rounded ${
-              btnName === "login" ? "bg-red-500 text-white" : "bg-green-500 text-white"
+              btnName === "login" ? "bg-red-600 text-white" : "bg-green-600 text-white"
             }`}
             onClick={() => {
               btnName === "login" ? setBtnName("logout") : setBtnName("login");
