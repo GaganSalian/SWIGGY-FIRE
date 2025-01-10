@@ -18,7 +18,7 @@ const Cart = () => {
 
   const handlePayment = () => {
     // Call your backend to create an order
-    fetch("https://swiggy-fire-backend.onrender.com", {
+    fetch("http://localhost:3001/api/create-order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,7 +67,7 @@ const Cart = () => {
   };
 
   return (
-    <div className="m-10 text-center dark:bg-gray-800 dark:text-white">
+    <div className="m-10 text-center dark:bg-gray-800 dark:text-white rounded-md">
       <h1 className="text-2xl font-bold">Cart</h1>
       <button
         className="p-2 m-2 bg-green-500 text-white rounded-lg hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-600"

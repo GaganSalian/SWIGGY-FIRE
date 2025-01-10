@@ -3,9 +3,9 @@ import React from 'react';
 const Grocery = () => {
   return (
     <div className="m-10 p-6 bg-gray-50 rounded-lg shadow-lg dark:bg-gray-800 dark:text-white">
-      <h1 className="text-3xl font-extrabold text-center text-gray-800 dark:text-gray-100 mb-6">
+      {/* <h1 className="  text-3xl font-extrabold text-center text-gray-800 dark:text-gray-100 mb-6">
         A Wide Variety of Groceries
-      </h1>
+      </h1> */}
       <p className="text-lg text-gray-700 dark:text-gray-300 mb-4 text-center">
         Discover fresh and organic products delivered to your doorstep.
       </p>

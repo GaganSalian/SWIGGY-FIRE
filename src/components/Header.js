@@ -12,7 +12,7 @@ const Header = () => {
 
   const onlineStatus = useOnlineStatus();
   const { loggedInUser } = useContext(UserContext);
-
+console.log(loggedInUser)
   // Subscribing to the store using selector
   const cartItems = useSelector((store) => store.cart.items);
 
@@ -55,7 +55,7 @@ const Header = () => {
               Cart ({cartItems.length} items)
             </Link>
           </li>
-          <li className="">{loggedInUser ? loggedInUser.name : "Guest"}</li>
+          <li className="">user:{loggedInUser}</li>
           <button
             className={`login px-4 py-0 h-8 mt-2 rounded ${
               btnName === "login" ? "bg-red-500 text-white" : "bg-green-500 text-white"

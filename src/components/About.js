@@ -3,7 +3,7 @@ import UserContext from '../utils/UserContext';
 
 const About = () => {
   return (
-    <div className="m-10 dark:bg-gray-800 dark:text-white">
+    <div className="m-10 dark:bg-gray-800 dark:text-white rounded-lg">
       <UserContext.Consumer>
         {({ loggedInUser }) => (
           <h1 className="text-xl font-bold">{loggedInUser}</h1>
