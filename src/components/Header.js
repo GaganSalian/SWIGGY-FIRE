@@ -25,7 +25,7 @@ console.log(loggedInUser)
   return (
     <div className="header flex justify-between m-10 border border-solid pl-5 pr-5 pt-2 pb-2 shadow-lg rounded-lg bg-orange-100 dark:bg-gray-800 text-black dark:text-white mb-6">
       <div className="logo-container">
-        <img className="logo w-20" src={LOGO_URL} />
+        <img className="logo w-20" alt="logo" src={LOGO_URL} />
       </div>
       <div className="nav-items pt-2">
         <ul className="flex items-center">
@@ -58,7 +58,7 @@ console.log(loggedInUser)
           <li className="">user:{loggedInUser}</li>
           <button
             className={`login px-4 py-0 h-8 mt-2 rounded ${
-              btnName === "login" ? "bg-red-500 text-white" : "bg-green-500 text-white"
+              btnName === "login" ? "bg-red-600 text-white" : "bg-green-600 text-white"
             }`}
             onClick={() => {
               btnName === "login" ? setBtnName("logout") : setBtnName("login");
