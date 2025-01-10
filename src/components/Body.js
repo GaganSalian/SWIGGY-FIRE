@@ -57,7 +57,7 @@ const Body = () => {
 
   return (
     <div className="body dark:bg-gray-800 dark:text-white">
-    <div className="p-6 text-center text-2xl font-bold leading-relaxed">Restaurants in Manipal...</div>
+    <div className="p-6 text-center text-2xl font-bold leading-relaxed dark:🌆">Restaurants in Manipal...🏙️</div>
       <div className="filter flex justify-between pr-24">
       
         <div className="search m-3 p-4 flex flex-col">
