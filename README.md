@@ -37,3 +37,34 @@ An advanced food ordering web app that replicates core functionality of Swiggy. 
 
 ## ⚙️ Project Structure
 
+SWIGGY-FIRE/
+├── public/
+│ └── index.html
+├── src/
+│ ├── components/
+│ ├── hooks/
+│ ├── utils/
+│ ├── App.js
+│ └── index.js
+├── swiggy-proxy/
+│ ├── wrangler.toml
+│ └── src/index.js
+├── package.json
+└── README.md
+
+yaml
+Copy
+Edit
+
+---
+
+## 🛠️ How to Run Locally
+
+Clone the repo:
+
+```bash
+git clone https://github.com/GaganSalian/SWIGGY-FIRE.git
+cd SWIGGY-FIRE
+npm install
+npm start
+
