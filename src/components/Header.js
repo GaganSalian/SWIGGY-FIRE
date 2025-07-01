@@ -12,75 +12,79 @@ const Header = () => {
 
   const onlineStatus = useOnlineStatus();
   const { loggedInUser } = useContext(UserContext);
-console.log(loggedInUser)
-  // Subscribing to the store using selector
+
   const cartItems = useSelector((store) => store.cart.items);
 
-  // Toggle dark mode
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark");
   };
 
   return (
-    <div className="header flex justify-between m-10 border border-solid pl-5 pr-5 pt-2 pb-2 shadow-lg rounded-lg bg-orange-100 dark:bg-gray-800 text-black dark:text-white mb-6">
-      <div className="logo-container">
-        <img className="logo w-20" alt="logo" src={LOGO_URL} />
-      </div>
-      <div className="nav-items pt-2">
-        <ul className="flex items-center">
-          <li className="p-4">Online: {onlineStatus ? "🟢" : "🔴"}</li>
-          <li className="p-4">
-            <Link to="/" className="dark:hover:text-gray-300">
-              Home
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link to="/about" className="dark:hover:text-gray-300">
-              About
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link to="/contact" className="dark:hover:text-gray-300">
-              Contact
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link to="/grocery" className="dark:hover:text-gray-300">
-              Grocery
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link to="/cart" className="dark:hover:text-gray-300">
-              Cart ({cartItems.length} items)
-            </Link>
-          </li>
-          <li className="">user:{loggedInUser}</li>
-          <button
-            className={`login px-4 py-0 h-8 mt-2 rounded ${
-              btnName === "login" ? "bg-red-600 text-white" : "bg-green-600 text-white"
-            }`}
-            onClick={() => {
-              btnName === "login" ? setBtnName("logout") : setBtnName("login");
-            }}
-          >
-            {btnName}
-          </button>
+    <header className="flex justify-between items-center px-6 py-3 border rounded-lg shadow-md bg-orange-50 dark:bg-gray-800 text-black dark:text-white">
+      {/* Logo */}
+      <Link to="/">
+        <img
+          src={LOGO_URL}
+          alt="Swiggy Logo"
+          className="w-24 hover:scale-105 transition-transform duration-200"
+        />
+      </Link>
 
-          <button
-            className="ml-4 flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 dark:bg-blue-700 text-white"
-            onClick={toggleDarkMode}
-          >
-            {isDarkMode ? (
-              <SunIcon className="w-6 h-6 text-yellow-300" />
-            ) : (
-              <MoonIcon className="w-6 h-6 text-gray-300" />
-            )}
-          </button>
-        </ul>
-      </div>
-    </div>
+      {/* Navigation */}
+      <nav className="flex items-center gap-6">
+        <span className="text-sm font-semibold">
+          Online: {onlineStatus ? "🟢" : "🔴"}
+        </span>
+
+        <NavLink to="/" label="Home" />
+        <NavLink to="/about" label="About" />
+        <NavLink to="/contact" label="Contact" />
+        <NavLink to="/grocery" label="Grocery" />
+        <NavLink to="/cart" label={`Cart (${cartItems.length})`} />
+
+        {/* User Info */}
+        <span className="text-sm font-medium italic">
+          {loggedInUser ? `User: ${loggedInUser}` : "Guest"}
+        </span>
+
+        {/* Login/Logout Button */}
+        <button
+          onClick={() => {
+            setBtnName(btnName === "login" ? "logout" : "login");
+          }}
+          className={`px-4 py-2 rounded text-white font-semibold transition-colors duration-200 ${
+            btnName === "login"
+              ? "bg-red-600 hover:bg-red-700"
+              : "bg-green-600 hover:bg-green-700"
+          }`}
+        >
+          {btnName}
+        </button>
+
+        {/* Dark Mode Toggle */}
+        <button
+          onClick={toggleDarkMode}
+          className="ml-3 w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 dark:bg-gray-500 dark:hover:bg-gray-400 transition-colors duration-200"
+        >
+          {isDarkMode ? (
+            <SunIcon className="w-5 h-5 text-yellow-300" />
+          ) : (
+            <MoonIcon className="w-5 h-5 text-white" />
+          )}
+        </button>
+      </nav>
+    </header>
   );
 };
+
+const NavLink = ({ to, label }) => (
+  <Link
+    to={to}
+    className="text-sm font-medium hover:text-orange-600 dark:hover:text-orange-300 transition-colors duration-150"
+  >
+    {label}
+  </Link>
+);
 
 export default Header;
