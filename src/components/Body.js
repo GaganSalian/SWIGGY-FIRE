@@ -19,7 +19,11 @@ const Body = () => {
   const fetchData = async () => {
     try {
       const data = await fetch(
-        SWIGGY_API
+        SWIGGY_API,
+          {
+        headers: {
+          "x-cors-api-key": "temp_406d80f7e4dc23895b53764ad01a09c8",
+        },
       );
       const json = await data.json();
       const restaurants =
