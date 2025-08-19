@@ -63,6 +63,7 @@ const RestaurantMenu = () => {
             key={category?.card?.card.title}
             data={category?.card?.card}
             index={index}
+            isMobile={isMobile}   {/* ✅ pass isMobile down */}
             showItems={isMobile ? index === showIndex : true} 
             setShowIndex={() =>
               isMobile
