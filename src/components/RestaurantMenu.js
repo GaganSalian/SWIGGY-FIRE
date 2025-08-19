@@ -2,25 +2,12 @@ import Shimmer from "./Shimmer";
 import { useParams } from "react-router-dom";
 import useRestaurantMenu from "../utils/useRestaurantMenu.js";
 import RestaurantCategories from "./RestaurantCategories.js";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const RestaurantMenu = () => {
   const { resId } = useParams();
   const resInfo = useRestaurantMenu(resId);
   const [showIndex, setShowIndex] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    // detect if it's mobile
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // <768px = mobile
-    };
-
-    handleResize(); // run once on mount
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   if (!resInfo) {
     return <Shimmer />;
@@ -63,12 +50,9 @@ const RestaurantMenu = () => {
             key={category?.card?.card.title}
             data={category?.card?.card}
             index={index}
-            isMobile={isMobile}   
-            showItems={isMobile ? index === showIndex : true} 
+            showItems={index === showIndex} // ✅ accordion everywhere
             setShowIndex={() =>
-              isMobile
-                ? setShowIndex(index === showIndex ? null : index) // accordion for mobile
-                : null // do nothing on desktop
+              setShowIndex(index === showIndex ? null : index)
             }
           />
         ))}
