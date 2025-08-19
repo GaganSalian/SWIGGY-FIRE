@@ -1,85 +1,86 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 
 export default function RestaurantMenu() {
   const [restaurants, setRestaurants] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
+  // ✅ Fetch all restaurants
   useEffect(() => {
-    async function fetchData() {
+    const fetchRestaurants = async () => {
       try {
-        const res = await axios.get(
-          "https://www.swiggy.com/mapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&lat=13.3730376&lng=74.7071271&carousel=true&third_party_vendor=1"
-        );
-
-        const data = res.data?.data?.cards || [];
-
-        // ✅ Case 1: Restaurant List Page
-        let restList =
-          data.find(
-            (c) =>
-              c?.card?.card?.gridElements?.infoWithStyle?.restaurants
-          )?.card?.card?.gridElements?.infoWithStyle?.restaurants || [];
-
-        // ✅ Case 2: Restaurant Menu Page (Categories)
-        let itemCategories = data
-          .map((c) => c?.groupedCard?.cardGroupMap?.REGULAR?.cards)
-          .flat()
-          .filter((c) => c?.card?.card?.["@type"]?.includes("ItemCategory"));
-
-        setRestaurants(restList);
-        setCategories(itemCategories);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching Swiggy data", error);
+        const res = await fetch("/api/restaurants"); // adjust to your backend endpoint
+        if (!res.ok) throw new Error("Failed to fetch restaurants");
+        const data = await res.json();
+        setRestaurants(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
         setLoading(false);
       }
-    }
-
-    fetchData();
+    };
+    fetchRestaurants();
   }, []);
 
-  if (loading) return <h2>Loading...</h2>;
+  // ✅ Fetch menu when restaurant is selected
+  useEffect(() => {
+    if (!selectedRestaurant) return;
+    const fetchMenu = async () => {
+      try {
+        const res = await fetch(`/api/restaurants/${selectedRestaurant}/menu`);
+        if (!res.ok) throw new Error("Failed to fetch menu");
+        const data = await res.json();
+        setMenu(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+    fetchMenu();
+  }, [selectedRestaurant]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div className="p-6">
-      {/* ✅ Restaurant List */}
-      {restaurants.length > 0 && (
-        <div>
-          <h2 className="text-xl font-bold mb-3">🍴 Restaurants</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="p-4">
+      {!selectedRestaurant ? (
+        <>
+          <h1 className="text-xl font-bold mb-4">Restaurants</h1>
+          <ul className="space-y-2">
             {restaurants.map((r) => (
-              <div
-                key={r.info.id}
-                className="p-4 border rounded-xl shadow-md hover:shadow-lg transition"
+              <li
+                key={r.id}
+                className="p-3 bg-gray-100 rounded cursor-pointer hover:bg-gray-200"
+                onClick={() => setSelectedRestaurant(r.id)}
               >
-                <h3 className="font-semibold">{r.info.name}</h3>
-                <p className="text-sm text-gray-600">{r.info.cuisines?.join(", ")}</p>
-                <p className="text-sm">⭐ {r.info.avgRatingString}</p>
-              </div>
+                {r.name}
+              </li>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* ✅ Restaurant Menu */}
-      {categories.length > 0 && (
-        <div className="mt-10">
-          <h2 className="text-xl font-bold mb-3">📋 Menu Categories</h2>
-          {categories.map((cat, idx) => (
-            <div key={idx} className="mb-6">
-              <h3 className="text-lg font-semibold">{cat.card.card.title}</h3>
-              <ul className="list-disc pl-5">
-                {cat.card.card.itemCards?.map((item) => (
-                  <li key={item.card.info.id}>
-                    {item.card.info.name} - ₹{item.card.info.price / 100}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+          </ul>
+        </>
+      ) : (
+        <>
+          <button
+            className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
+            onClick={() => setSelectedRestaurant(null)}
+          >
+            ← Back
+          </button>
+          <h1 className="text-xl font-bold mb-4">Menu</h1>
+          {menu.length > 0 ? (
+            <ul className="space-y-2">
+              {menu.map((item, i) => (
+                <li key={i} className="p-3 bg-gray-100 rounded">
+                  <strong>{item.name}</strong> – ₹{item.price}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No items found.</p>
+          )}
+        </>
       )}
     </div>
   );
