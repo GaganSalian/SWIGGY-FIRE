@@ -1,57 +1,64 @@
-import React, { useEffect, useState } from "react";
+import Shimmer from "./Shimmer";
+import { useParams } from "react-router-dom";
+import useRestaurantMenu from "../utils/useRestaurantMenu.js";
+import RestaurantCategories from "./RestaurantCategories.js";
+import { useState } from "react";
 
-export default function RestaurantMenu({ restaurantId }) {
-  const [menu, setMenu] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const RestaurantMenu = () => {
+  const { resId } = useParams();
+  const resInfo = useRestaurantMenu(resId);
+  const [showIndex, setShowIndex] = useState(null);
 
-  useEffect(() => {
-    if (!restaurantId) return;
+  if (!resInfo) {
+    return <Shimmer />;
+  }
 
-    const fetchMenu = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/restaurants/${restaurantId}/menu`);
-        if (!res.ok) throw new Error("Failed to fetch menu");
-        const data = await res.json();
-        setMenu(data.items || []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { name, cuisines, costForTwoMessage, avgRating, totalRatingsString } =
+    resInfo?.cards?.[2]?.card?.card?.info || {};
 
-    fetchMenu();
-  }, [restaurantId]);
-
-  if (loading) return <p>Loading menu...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (menu.length === 0) return <p>No menu items available.</p>;
+  const categories =
+    resInfo?.cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
+      (c) =>
+        c.card?.card?.["@type"] ===
+        "type.googleapis.com/swiggy.presentation.food.v2.ItemCategory"
+    ) || [];
 
   return (
-    <div className="menu-container">
-      <h2 className="text-xl font-bold mb-4">Menu</h2>
-      <ul className="space-y-2">
-        {menu.map((item) => (
-          <li
-            key={item.id}
-            className="flex justify-between items-center border-b pb-2"
-          >
-            <div>
-              <p className="font-medium">{item.name}</p>
-              <p className="text-sm text-gray-500">₹{item.price}</p>
-            </div>
-            {item.image && (
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-16 h-16 object-cover rounded"
-              />
-            )}
-          </li>
+    <div className="dark:bg-gray-900 min-h-screen py-6 px-4 sm:px-8">
+      {/* Restaurant Header */}
+      <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-8">
+        <h1 className="font-extrabold text-2xl sm:text-3xl text-gray-800 dark:text-white">
+          {name}
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
+          {cuisines?.join(", ")}
+        </p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 text-sm">
+          <p className="text-green-600 font-semibold bg-green-100 px-3 py-1 rounded-lg dark:bg-green-700 dark:text-green-200">
+            ⭐ {avgRating} • {totalRatingsString}
+          </p>
+          <p className="mt-2 sm:mt-0 font-medium text-gray-700 dark:text-gray-200">
+            {costForTwoMessage}
+          </p>
+        </div>
+      </div>
+
+      {/* Categories */}
+      <div className="max-w-3xl mx-auto">
+        {categories.map((category, index) => (
+          <RestaurantCategories
+            key={category?.card?.card.title}
+            data={category?.card?.card}
+            index={index}
+            showItems={index === showIndex} // accordion everywhere
+            setShowIndex={() =>
+              setShowIndex(index === showIndex ? null : index)
+            }
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
-}
+};
+
+export default RestaurantMenu;
