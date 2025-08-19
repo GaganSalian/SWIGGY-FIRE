@@ -1,63 +1,86 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import Shimmer from "./Shimmer";
+import axios from "axios";
 
 export default function RestaurantMenu() {
-  const { resId } = useParams();
-  const [menuData, setMenuData] = useState(null);
+  const [restaurants, setRestaurants] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchMenu();
+    async function fetchData() {
+      try {
+        const res = await axios.get(
+          "https://www.swiggy.com/mapi/restaurants/list/v5?offset=0&is-seo-homepage-enabled=true&lat=13.3730376&lng=74.7071271&carousel=true&third_party_vendor=1"
+        );
+
+        const data = res.data?.data?.cards || [];
+
+        // ✅ Case 1: Restaurant List Page
+        let restList =
+          data.find(
+            (c) =>
+              c?.card?.card?.gridElements?.infoWithStyle?.restaurants
+          )?.card?.card?.gridElements?.infoWithStyle?.restaurants || [];
+
+        // ✅ Case 2: Restaurant Menu Page (Categories)
+        let itemCategories = data
+          .map((c) => c?.groupedCard?.cardGroupMap?.REGULAR?.cards)
+          .flat()
+          .filter((c) => c?.card?.card?.["@type"]?.includes("ItemCategory"));
+
+        setRestaurants(restList);
+        setCategories(itemCategories);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching Swiggy data", error);
+        setLoading(false);
+      }
+    }
+
+    fetchData();
   }, []);
 
-  const fetchMenu = async () => {
-    try {
-      const response = await fetch(
-        `https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=12.9351929&lng=77.62448069999999&restaurantId=${resId}`
-      );
-      const json = await response.json();
-
-      // ✅ Detect if it's mobile or desktop
-      let info, itemCards;
-      if (json?.data?.cards?.[0]?.card?.card?.info) {
-        // Mobile JSON structure
-        info = json.data.cards[0].card.card.info;
-        itemCards =
-          json.data.cards[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.find(
-            (c) => c.card?.card?.itemCards
-          )?.card.card.itemCards;
-      } else {
-        // Desktop JSON structure → keep your old hardcoded path
-        info = json?.data?.cards?.[2]?.card?.card?.info;
-        itemCards =
-          json?.data?.cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.[1]?.card?.card?.itemCards;
-      }
-
-      setMenuData({ info, itemCards });
-    } catch (error) {
-      console.error("Failed to fetch menu:", error);
-    }
-  };
-
-  if (!menuData) return <Shimmer />;
-
-  const { info, itemCards } = menuData;
+  if (loading) return <h2>Loading...</h2>;
 
   return (
-    <div className="menu">
-      <h1>{info?.name}</h1>
-      <p>
-        {info?.cuisines?.join(", ")} – {info?.costForTwoMessage}
-      </p>
-      <h2>Menu</h2>
-      <ul>
-        {itemCards?.map((item) => (
-          <li key={item.card.info.id}>
-            {item.card.info.name} – ₹{item.card.info.price / 100 ||
-              item.card.info.defaultPrice / 100}
-          </li>
-        ))}
-      </ul>
+    <div className="p-6">
+      {/* ✅ Restaurant List */}
+      {restaurants.length > 0 && (
+        <div>
+          <h2 className="text-xl font-bold mb-3">🍴 Restaurants</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {restaurants.map((r) => (
+              <div
+                key={r.info.id}
+                className="p-4 border rounded-xl shadow-md hover:shadow-lg transition"
+              >
+                <h3 className="font-semibold">{r.info.name}</h3>
+                <p className="text-sm text-gray-600">{r.info.cuisines?.join(", ")}</p>
+                <p className="text-sm">⭐ {r.info.avgRatingString}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Restaurant Menu */}
+      {categories.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-xl font-bold mb-3">📋 Menu Categories</h2>
+          {categories.map((cat, idx) => (
+            <div key={idx} className="mb-6">
+              <h3 className="text-lg font-semibold">{cat.card.card.title}</h3>
+              <ul className="list-disc pl-5">
+                {cat.card.card.itemCards?.map((item) => (
+                  <li key={item.card.info.id}>
+                    {item.card.info.name} - ₹{item.card.info.price / 100}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
