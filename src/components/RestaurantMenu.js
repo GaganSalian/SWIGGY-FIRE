@@ -50,7 +50,7 @@ const RestaurantMenu = () => {
             key={category?.card?.card.title}
             data={category?.card?.card}
             index={index}
-            showItems={index === showIndex} // ✅ accordion everywhere
+            showItems={index === showIndex} // accordion everywhere
             setShowIndex={() =>
               setShowIndex(index === showIndex ? null : index)
             }
