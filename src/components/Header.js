@@ -5,15 +5,13 @@ import useOnlineStatus from "../utils/useOnlineStatus.js";
 import UserContext from "../utils/UserContext.js";
 import { useSelector } from "react-redux";
 import { SunIcon, MoonIcon } from "@heroicons/react/solid";
-import logo from "../img/pngaaa.png";
 
 const Header = () => {                   
   const [btnName, setBtnName] = useState("login");
-  const [isDarkMode, setIsDarkMode] = useState(false); 
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const onlineStatus = useOnlineStatus();
   const { loggedInUser } = useContext(UserContext);
-
   const cartItems = useSelector((store) => store.cart.items);
 
   const toggleDarkMode = () => {
@@ -35,14 +33,11 @@ const Header = () => {
     </span>
   </Link>
 
-  {/* Navigation */}
-  <nav className="flex flex-wrap items-center gap-4 md:gap-6">
-    <span className="text-lg font-medium">
-      Online:{" "}
-      <span className={onlineStatus ? "text-green-500" : "text-red-500"}>
-        {onlineStatus ? "🟢" : "🔴"}
-      </span>
-    </span>
+      {/* Navigation */}
+      <nav className="flex items-center gap-6">
+        <span className="text-sm font-semibold">
+          Online: {onlineStatus ? "🟢" : "🔴"}
+        </span>
 
     <NavLink to="/" label="Home" />
     <NavLink to="/about" label="About" />
@@ -67,20 +62,19 @@ const Header = () => {
       {btnName}
     </button>
 
-    {/* Dark Mode Toggle */}
-    <button
-      onClick={toggleDarkMode}
-      className="ml-2 w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 dark:bg-gray-500 dark:hover:bg-gray-400 transition-all duration-300 shadow-sm"
-    >
-      {isDarkMode ? (
-        <SunIcon className="w-5 h-5 text-yellow-300" />
-      ) : (
-        <MoonIcon className="w-5 h-5 text-white" />
-      )}
-    </button>
-  </nav>
-</header>
-
+        {/* Dark Mode Toggle */}
+        <button
+          onClick={toggleDarkMode}
+          className="ml-3 w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 dark:bg-gray-500 dark:hover:bg-gray-400 transition-colors duration-200"
+        >
+          {isDarkMode ? (
+            <SunIcon className="w-5 h-5 text-yellow-300" />
+          ) : (
+            <MoonIcon className="w-5 h-5 text-white" />
+          )}
+        </button>
+      </nav>
+    </header>
   );
 };
 

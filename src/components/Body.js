@@ -18,20 +18,32 @@ const Body = () => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch(SWIGGY_API);
-      const json = await response.json();
+ const fetchData = async () => {
+  try {
+    const response = await fetch(SWIGGY_API);
+    const json = await response.json();
 
-      const restaurantsList =
-        json?.data?.cards[1 || 2]?.card?.card?.gridElements?.infoWithStyle?.restaurants || [];
+    // Extract cards array
+    const cards = json?.data?.cards || [];
 
-      setRestaurants(restaurantsList);
-      setFilteredRestaurants(restaurantsList);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    // Try to find the first card that contains restaurants
+    let restaurantsList = [];
+    for (let i = 0; i < cards.length; i++) {
+      const maybeRestaurants =
+        cards[i]?.card?.card?.gridElements?.infoWithStyle?.restaurants;
+      if (maybeRestaurants && maybeRestaurants.length > 0) {
+        restaurantsList = maybeRestaurants;
+        break;
+      }
     }
-  };
+
+    setRestaurants(restaurantsList);
+    setFilteredRestaurants(restaurantsList);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
 
   const handleSearch = () => {
     const filteredList = restaurants.filter((res) =>
