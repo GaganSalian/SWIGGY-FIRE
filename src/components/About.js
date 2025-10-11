@@ -5,7 +5,7 @@ const About = () => {
   const { loggedInUser } = useContext(UserContext);
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-8 bg-orange-50 dark:bg-gray-800 dark:text-white rounded-lg shadow-lg">
+    <div className="max-w-4xl mx-auto mt-10 p-8 bg-orange-50 bg-[url('https://www.toptal.com/designers/subtlepatterns/uploads/symphony.png')] bg-repeat dark:bg-gray-800 dark:text-white rounded-lg shadow-lg">
       <h1 className="text-3xl font-extrabold mb-6 text-center text-orange-600 dark:text-orange-400">
         About Swiggy Fire 🚀
       </h1>

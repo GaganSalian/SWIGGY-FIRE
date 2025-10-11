@@ -40,7 +40,7 @@ const AppLayout = () => {
   return (
     <Provider store={appStore}>
       <UserContext.Provider value={{ loggedInUser: userName, setUserName }}>
-        <div className={`app ${darkMode ? "dark" : ""}`}>
+        <div className={`bg-orange-100 app ${darkMode ? "dark" : ""}`}>
           <Header toggleDarkMode={handleDarkModeToggle} />
           <Outlet />
         </div>

@@ -5,10 +5,11 @@ import useOnlineStatus from "../utils/useOnlineStatus.js";
 import UserContext from "../utils/UserContext.js";
 import { useSelector } from "react-redux";
 import { SunIcon, MoonIcon } from "@heroicons/react/solid";
+import logo from "../img/pngaaa.png";
 
-const Header = () => {
+const Header = () => {                   
   const [btnName, setBtnName] = useState("login");
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false); 
 
   const onlineStatus = useOnlineStatus();
   const { loggedInUser } = useContext(UserContext);
@@ -20,68 +21,73 @@ const Header = () => {
     document.documentElement.classList.toggle("dark");
   };
 
-  return (
-    <header className="flex justify-between items-center px-6 py-3 border rounded-lg shadow-md bg-orange-50 dark:bg-gray-800 text-black dark:text-white">
-      {/* Logo */}
-      <Link to="/">
-        <img
-          src={LOGO_URL}
-          alt="Swiggy Logo"
-          className="w-24 hover:scale-105 transition-transform duration-200"
-        />
-      </Link>
+  return (   
+   <header className="flex flex-wrap justify-between  mx-10 items-center px-8 py-3 border border-gray-200 rounded-b-xl shadow-md bg-orange-300 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-all duration-300">
+  {/* Logo */}
+  <Link to="/" className="flex items-center gap-2">
+    <img
+      src={logo}
+      alt="Swiggy Logo"
+      className="w-20 hover:scale-105 transition-transform duration-300"
+    />
+    <span className="text-lg font-bold tracking-wide hidden sm:block">
+      Good FOOD
+    </span>
+  </Link>
 
-      {/* Navigation */}
-      <nav className="flex items-center gap-6">
-        <span className="text-sm font-semibold">
-          Online: {onlineStatus ? "🟢" : "🔴"}
-        </span>
+  {/* Navigation */}
+  <nav className="flex flex-wrap items-center gap-4 md:gap-6">
+    <span className="text-lg font-medium">
+      Online:{" "}
+      <span className={onlineStatus ? "text-green-500" : "text-red-500"}>
+        {onlineStatus ? "🟢" : "🔴"}
+      </span>
+    </span>
 
-        <NavLink to="/" label="Home" />
-        <NavLink to="/about" label="About" />
-        <NavLink to="/contact" label="Contact" />
-        <NavLink to="/grocery" label="Grocery" />
-        <NavLink to="/cart" label={`Cart (${cartItems.length})`} />
+    <NavLink to="/" label="Home" />
+    <NavLink to="/about" label="About" />
+    <NavLink to="/contact" label="Contact" />
+    <NavLink to="/grocery" label="Grocery" />
+    <NavLink to="/cart" label={`Cart (${cartItems.length})`} />
 
-        {/* User Info */}
-        <span className="text-sm font-medium italic">
-          {loggedInUser ? `User: ${loggedInUser}` : "Guest"}
-        </span>
+    {/* User Info */}
+    <span className="hidden md:inline text-lg italic font-medium text-gray-700 dark:text-gray-300">
+      {loggedInUser ? `👤 ${loggedInUser}` : "Guest"}
+    </span>
 
-        {/* Login/Logout Button */}
-        <button
-          onClick={() => {
-            setBtnName(btnName === "login" ? "logout" : "login");
-          }}
-          className={`px-4 py-2 rounded text-white font-semibold transition-colors duration-200 ${
-            btnName === "login"
-              ? "bg-red-600 hover:bg-red-700"
-              : "bg-green-600 hover:bg-green-700"
-          }`}
-        >
-          {btnName}
-        </button>
+    {/* Login/Logout Button */}
+    <button
+      onClick={() => setBtnName(btnName === "login" ? "logout" : "login")}
+      className={`px-4 py-1.5 rounded-lg text-white font-semibold shadow-sm transition-all duration-300 ${
+        btnName === "login"
+          ? "bg-red-500 hover:bg-red-600"
+          : "bg-green-500 hover:bg-green-600"
+      }`}
+    >
+      {btnName}
+    </button>
 
-        {/* Dark Mode Toggle */}
-        <button
-          onClick={toggleDarkMode}
-          className="ml-3 w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 dark:bg-gray-500 dark:hover:bg-gray-400 transition-colors duration-200"
-        >
-          {isDarkMode ? (
-            <SunIcon className="w-5 h-5 text-yellow-300" />
-          ) : (
-            <MoonIcon className="w-5 h-5 text-white" />
-          )}
-        </button>
-      </nav>
-    </header>
+    {/* Dark Mode Toggle */}
+    <button
+      onClick={toggleDarkMode}
+      className="ml-2 w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 dark:bg-gray-500 dark:hover:bg-gray-400 transition-all duration-300 shadow-sm"
+    >
+      {isDarkMode ? (
+        <SunIcon className="w-5 h-5 text-yellow-300" />
+      ) : (
+        <MoonIcon className="w-5 h-5 text-white" />
+      )}
+    </button>
+  </nav>
+</header>
+
   );
 };
 
 const NavLink = ({ to, label }) => (
   <Link
     to={to}
-    className="text-sm font-medium hover:text-orange-600 dark:hover:text-orange-300 transition-colors duration-150"
+    className="text-base font-medium hover:text-orange-600 dark:hover:text-orange-300 transition-colors duration-150"
   >
     {label}
   </Link>
