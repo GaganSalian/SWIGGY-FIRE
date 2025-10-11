@@ -5,6 +5,7 @@ import useOnlineStatus from "../utils/useOnlineStatus.js";
 import UserContext from "../utils/UserContext.js";
 import { useSelector } from "react-redux";
 import { SunIcon, MoonIcon } from "@heroicons/react/solid";
+import logo from "../img/pngaaa.png"
 
 const Header = () => {                   
   const [btnName, setBtnName] = useState("login");
