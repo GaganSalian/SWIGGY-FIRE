@@ -13,11 +13,15 @@ const RestaurantMenu = () => {
     return <Shimmer />;
   }
 
+  const restaurantInfoCard = resInfo?.cards?.find(
+    (c) => c?.card?.card?.["@type"] === "type.googleapis.com/swiggy.presentation.food.v2.Restaurant"
+  );
   const { name, cuisines, costForTwoMessage, avgRating, totalRatingsString } =
-    resInfo?.cards?.[2]?.card?.card?.info || {};
+    restaurantInfoCard?.card?.card?.info || {};
 
+  const menuCard = resInfo?.cards?.find((c) => c?.groupedCard);
   const categories =
-    resInfo?.cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
+    menuCard?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
       (c) =>
         c.card?.card?.["@type"] ===
         "type.googleapis.com/swiggy.presentation.food.v2.ItemCategory"

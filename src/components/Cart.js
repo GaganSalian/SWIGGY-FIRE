@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Itemlist from "./Itemlist";
 import { clearCart } from "../utils/cartSlice";
@@ -11,59 +11,93 @@ const Cart = () => {
   }, 0);
 
   const dispatch = useDispatch();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleClearCart = () => {
     dispatch(clearCart());
   };
 
-  const handlePayment = () => {
-    // Call your backend to create an order
-    fetch("http://localhost:3001/api/create-order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        amount: totalAmount * 100, // Razorpay requires amount in paise (1 INR = 100 paise)
-        currency: "INR",
-        receipt: "order_rcptid_11",
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Initialize Razorpay with the response from the backend
-        const options = {
-          key: process.env.REACT_APP_RAZORPAY_KEY, // Access Razorpay key from .env
-          amount: data.amount_due, // Amount in paise (e.g., ₹500 = 50000 paise)
-          currency: data.currency,
-          order_id: data.id, // Razorpay order ID
-          name: "Your App Name", // Company/Brand Name
-          description: "Payment for Order",
-          image: "https://your-logo-url.com/logo.png",
-          handler: function (response) {
-            // Handle successful payment
-            console.log("Payment successful: ", response);
-            alert("Payment successful!");
-          },
-          prefill: {
-            name: "Customer Name",
-            email: "customer@example.com",
-            contact: "1234567890",
-          },
-          notes: {
-            address: "Customer Address",
-          },
-          theme: {
-            color: "#F37254",
-          },
-        };
+  const ensureRazorpayLoaded = () => {
+    return new Promise((resolve, reject) => {
+      if (window.Razorpay) return resolve();
 
-        const razorpay = new window.Razorpay(options);
-        razorpay.open();
-      })
-      .catch((err) => {
-        console.error("Error in creating order: ", err);
+      const existing = document.querySelector(
+        'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+      );
+
+      if (existing) {
+        if (existing.getAttribute("data-loaded") === "true") return resolve();
+        existing.addEventListener("load", () => resolve());
+        existing.addEventListener("error", () => reject(new Error("Razorpay script failed to load")));
+        return;
+      }
+
+      const s = document.createElement("script");
+      s.src = "https://checkout.razorpay.com/v1/checkout.js";
+      s.async = true;
+      s.onload = () => {
+        s.setAttribute("data-loaded", "true");
+        resolve();
+      };
+      s.onerror = () => reject(new Error("Razorpay script failed to load"));
+      document.body.appendChild(s);
+    });
+  };
+
+  const handlePayment = async () => {
+    if (isProcessing) return; // prevent duplicate calls
+    if (cartItems.length === 0) return;
+
+    setIsProcessing(true);
+
+    try {
+      await ensureRazorpayLoaded();
+
+      const response = await fetch("http://localhost:3001/api/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: totalAmount * 100, // Razorpay requires amount in paise (1 INR = 100 paise)
+          currency: "INR",
+          receipt: "order_rcptid_11",
+        }),
       });
+
+      const data = await response.json();
+
+      const options = {
+        key: process.env.REACT_APP_RAZORPAY_KEY || window.RAZORPAY_KEY,
+        amount: data.amount_due || data.amount || totalAmount * 100,
+        currency: data.currency || "INR",
+        order_id: data.id,
+        name: "Your App Name",
+        description: "Payment for Order",
+        handler: function (response) {
+          console.log("Payment successful: ", response);
+          alert("Payment successful!");
+        },
+        prefill: {
+          name: "Customer Name",
+          email: "customer@example.com",
+          contact: "1234567890",
+        },
+        notes: {
+          address: "Customer Address",
+        },
+        theme: {
+          color: "#F37254",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (err) {
+      console.error("Error in creating order or loading Razorpay: ", err);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -87,10 +121,12 @@ const Cart = () => {
           </h2>
 
           <button
-            className="p-2 bg-green-500 text-white rounded mt-4 hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-600"
-            onClick={handlePayment} // Trigger Razorpay payment
+            className={`p-2 mt-4 rounded text-white ${isProcessing ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-600'}`}
+            onClick={handlePayment}
+            disabled={isProcessing || cartItems.length === 0}
+            aria-busy={isProcessing}
           >
-            Proceed to Pay ₹{totalAmount}
+            {isProcessing ? 'Processing...' : `Proceed to Pay ₹${totalAmount}`}
           </button>
         </div>
       </div>
