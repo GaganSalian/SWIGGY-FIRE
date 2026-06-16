@@ -121,12 +121,10 @@ const Cart = () => {
           </h2>
 
           <button
-            className={`p-2 mt-4 rounded text-white ${isProcessing ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-600'}`}
-            onClick={handlePayment}
-            disabled={isProcessing || cartItems.length === 0}
-            aria-busy={isProcessing}
+            className="p-2 bg-green-500 text-white rounded mt-4 hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-600"
+            onClick={handlePayment} // Trigger Razorpay payment
           >
-            {isProcessing ? 'Processing...' : `Proceed to Pay ₹${totalAmount}`}
+            Proceed to Pay ₹{totalAmount}
           </button>
         </div>
       </div>
